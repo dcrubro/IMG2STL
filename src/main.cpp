@@ -1,6 +1,6 @@
-//Written by DcruBro, GPLv3 License
+//Written by DcruBro, GPLv3 License. This software is provided with no warranty of any kind, use at your own risk.
 //This script generates an STL file based on the black to white ratio of a pixel as its height.
-//Originally created to make Destiny 2 emblems printable, but can be adapted to other uses.
+//Originally created to make Destiny 2 emblems printable, but can be adapted to other uses (Already is lol).
 //Also, this code was written quickly, so bugs may be present, and the code quality is not at its finest.
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -166,7 +166,7 @@ void generateHeightmapSTL(const std::string& imagePath, const std::string& outpu
 
 
 int main(int argc, char **argv) {
-    //Input args: imagePath, outPath, minMm, maxMm
+    //Input args: imagePath, outPath, minMm, maxMm, scale, minThinkness
     //Current version requires specifing image details manually, may rewrite in the future.
     if (argc < 7) {
         std::cout << "Too few arguments specified. Exiting.\n";
