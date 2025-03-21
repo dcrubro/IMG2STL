@@ -6,9 +6,11 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include <iostream>
+#include <iomanip>
 #include <cstdint>
 #include <fstream>
 #include <vector>
+#include <chrono>
 
 void writeSTL(const std::string& fn, const std::vector<float>& vertices, const std::vector<int>& faces) {
     std::ofstream file(fn, std::ios::binary);
@@ -54,6 +56,12 @@ void generateHeightmapSTL(const std::string& imagePath, const std::string& outpu
 
     std::vector<float> vertices;
     std::vector<int> faces;
+
+    //Debug mode stuff
+    auto now = std::chrono::system_clock::now();
+    auto duration = now.time_since_epoch();
+    auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+    uint64_t pixelCount = width * height;
 
     float min_pixel_value = 255.0f;
     for (int i = 0; i < width * height; i++) {
@@ -158,6 +166,16 @@ void generateHeightmapSTL(const std::string& imagePath, const std::string& outpu
         }
     }
 
+    now = std::chrono::system_clock::now();
+    duration = now.time_since_epoch();
+    auto bMilliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+
+    auto timeTook = bMilliseconds - milliseconds;
+    auto secTime = timeTook / 1000.0f;
+
+    std::cout << "Generation took " << secTime << " seconds.\n";
+    std::cout << "Avg. speed: " << std::setprecision(2) << ((pixelCount / 10e6) / secTime) << " MegaPixels/sec.\n";
+
     writeSTL(outputSTL, vertices, faces);
     stbi_image_free(imgData);
 
@@ -166,7 +184,7 @@ void generateHeightmapSTL(const std::string& imagePath, const std::string& outpu
 
 
 int main(int argc, char **argv) {
-    //Input args: imagePath, outPath, minMm, maxMm, scale, minThinkness
+    //Input args: imagePath, outPath, minMm, maxMm, scale, minThinkness, [DEBUG MODE]
     //Current version requires specifing image details manually, may rewrite in the future.
     if (argc < 7) {
         std::cout << "Too few arguments specified. Exiting.\n";
@@ -180,6 +198,12 @@ int main(int argc, char **argv) {
     float maxMm = std::atof(argv[4]);
     float scale = std::atof(argv[5]);
     float minThinkness = std::atof(argv[6]);
+    //std::string debug(argv[7]);
+
+    /*if (debug.size() > 1 && debug == "true") {
+        generateHeightmapSTL(path, outPath, minMm, maxMm, scale, minThinkness, true);
+        return;
+    }*/
 
     generateHeightmapSTL(path, outPath, minMm, maxMm, scale, minThinkness);
 
